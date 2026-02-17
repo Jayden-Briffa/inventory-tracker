@@ -6,6 +6,7 @@ from .serializers import ItemSerializer
 from django.shortcuts import HttpResponse
 from django.views import View
 
+# TODO: Add POST and PUT
 # Create your views here.
 # @method_decorator(csrf_exempt, name="dispatch")
 class ItemCreate(generics.ListCreateAPIView):
@@ -13,6 +14,6 @@ class ItemCreate(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
 
 class ItemRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    querySet = Item.objects.all()
+    queryset = Item.objects.all()
     serializer_class= ItemSerializer
     lookup_field = "pk"
