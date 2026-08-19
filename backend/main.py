@@ -83,6 +83,21 @@ async def update_item(qr, item: schemas.ItemUpdate, db = Depends(database.get_db
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update.")
     
     for key, value in update_data.items():
+        if key == "isCollection":
+            if value:
+                # If changing to individual, check that there aren't more than 1 borrows already
+                active_borrows = db.query(models.Borrow).filter(
+                    models.Borrow.itemId == item_to_update.itemId,
+                    models.Borrow.isReturned == False,
+                ).all()
+
+                print("BORROWS:", active_borrows)
+                
+                if len(active_borrows) >= 2:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST, 
+                        detail="Cannot change item to an individual while it has more than 1 active borrows."
+                    )
         setattr(item_to_update, key, value)
     
     db.commit()
